@@ -1,0 +1,98 @@
+# ============================================
+# Bank Email Automation System — Docker Compose
+# ============================================
+version: "3.9"
+
+services:
+  # -----------------------------
+  # 1. Mock Core Banking API
+  # -----------------------------
+  api:
+    build: .
+    container_name: bank_api
+    command: uvicorn apis.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    environment:
+      - API_BASE=http://api:8000
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      - ollama
+    networks:
+      - banknet
+    restart: unless-stopped
+
+  # -----------------------------
+  # 2. Streamlit Approval UI
+  # -----------------------------
+  ui:
+    build: .
+    container_name: bank_ui
+    command: streamlit run ui/approval_app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    environment:
+      - API_BASE=http://api:8000
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      - api
+      - ollama
+    networks:
+      - banknet
+    restart: unless-stopped
+
+  # -----------------------------
+  # 3. Scheduler (main.py)
+  # -----------------------------
+  scheduler:
+    build: .
+    container_name: bank_scheduler
+    command: python main.py
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    environment:
+      - API_BASE=http://api:8000
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      - api
+      - ollama
+    networks:
+      - banknet
+    restart: unless-stopped
+
+  # -----------------------------
+  # 4. Ollama (Llama 3 LLM)
+  # -----------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: bank_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - banknet
+    restart: unless-stopped
+    # Optional GPU (uncomment if NVIDIA GPU available)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+networks:
+  banknet:
+    driver: bridge
+
+volumes:
+  ollama_models:
+    driver: local

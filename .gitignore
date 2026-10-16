@@ -1,0 +1,58 @@
+# ---------- Virtual Environment ----------
+venv/
+env/
+ENV/
+
+# ---------- Python Cache ----------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+*$py.class
+
+# ---------- Environment / Secrets ----------
+.env
+.env.local
+*.env
+
+# ---------- Logs ----------
+logs/*.log
+logs/attachments/
+logs/attachments_test/
+*.log
+
+# ---------- Testing ----------
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ---------- IDE ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- Package ----------
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ---------- Database ----------
+*.db
+*.sqlite
+*.sqlite3
+
+# ---------- Jupyter ----------
+.ipynb_checkpoints/
+
+# ---------- MyPy ----------
+.mypy_cache/

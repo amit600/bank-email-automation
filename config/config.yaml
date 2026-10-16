@@ -1,0 +1,49 @@
+app:
+  name: "Bank Email Automation System"
+  version: "1.0.0"
+  environment: "development"
+  schedule_interval_minutes: 10
+
+llm:
+  provider: "ollama"
+  model: "llama3"
+  base_url: "http://localhost:11434"
+  temperature: 0.2
+  max_tokens: 1024
+  timeout_seconds: 60
+
+email:
+  imap_host: "imap.mockbank.com"
+  imap_port: 993
+  smtp_host: "smtp.mockbank.com"
+  smtp_port: 587
+  username: "support@mockbank.com"
+  password: "mockpassword"
+  mailbox: "INBOX"
+  max_emails_per_run: 20
+
+apis:
+  base_url: "http://localhost:8000"
+  timeout_seconds: 10
+  endpoints:
+    validate_account: "/api/v1/validate/account"
+    validate_card: "/api/v1/validate/card"
+    account_balance: "/api/v1/account/balance"
+    card_transactions: "/api/v1/card/transactions"
+    statement: "/api/v1/statement"
+
+security:
+  mask_account_digits: 4
+  mask_card_digits: 4
+  allowed_file_types: ["pdf", "png", "jpg", "jpeg"]
+  max_file_size_mb: 5
+
+logging:
+  level: "INFO"
+  log_dir: "logs"
+  audit_file: "logs/audit.log"
+  app_file: "logs/app.log"
+
+human_in_loop:
+  enabled: true
+  ui_port: 8501
